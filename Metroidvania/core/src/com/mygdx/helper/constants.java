@@ -1,6 +1,8 @@
 package com.mygdx.helper;
 
 public class constants {
-    /* Classe contenant les constantes utilisés au cours du développement du jeu */
-    public static final float pixelPerMeter = 32.0f;
+    /* Class who contains the fixed value of the game */
+
+    /* pixelPerMeter define the number of pixel who represent one meter in the game */
+    public static final float pixelPerMeter = 64.0f;
 }

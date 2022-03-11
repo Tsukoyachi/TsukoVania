@@ -11,43 +11,51 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.entities.Player;
 import com.mygdx.helper.TileMapHelper;
 import com.mygdx.helper.constants;
 
 public class GameScreen extends ScreenAdapter {
-    /* Classe permettant de gérer l'affichage du jeu */
+    /* Class who manage the display of the game */
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
     private OrthogonalTiledMapRenderer orthogonalTiledMapRenderer;
     private TileMapHelper tileMapHelper;
+    private Player player;
 
     public GameScreen(OrthographicCamera camera) {
         this.camera = camera;
         this.batch = new SpriteBatch();
-        this.world = new World(new Vector2(0, 0), false);
+        this.world = new World(new Vector2(0, -10), false);
         this.box2DDebugRenderer = new Box2DDebugRenderer();
 
         tileMapHelper = new TileMapHelper(this);
         orthogonalTiledMapRenderer = tileMapHelper.setupMap();
+        
+        player = new Player(world);
     }
 
     private void update() {
         world.step(1 / 60f, 6, 2);
+        player.update(1 / 60f);
 
         cameraUpdate();
 
         batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.setView(camera);
-
+        
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
+
+
     }
 
+    /* Method usefull for later to allow the camera to follow the player */
     private void cameraUpdate() {
-        camera.position.set(new Vector3(0, 0, 0));
+        camera.position.set(new Vector3(player.getX(), player.getY(), 0));
         camera.update();
     }
 
@@ -60,6 +68,8 @@ public class GameScreen extends ScreenAdapter {
         orthogonalTiledMapRenderer.render();
 
         batch.begin();
+        
+        player.draw(batch);
 
         batch.end();
         box2DDebugRenderer.render(world, camera.combined.scl(constants.pixelPerMeter));

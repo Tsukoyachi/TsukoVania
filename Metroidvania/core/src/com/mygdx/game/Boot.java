@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Game;
 
 public class Boot extends Game {
-    /* Classe Permettant d'instancier les éléments du jeu */
+    /* Class who launch the base of the game */
     public static Boot INSTANCE;
     private int widthScreen, heightScreen;
     private OrthographicCamera orthographicCamera;
