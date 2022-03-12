@@ -14,9 +14,12 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.entities.Player;
 import com.mygdx.helper.TileMapHelper;
 import com.mygdx.helper.constants;
+import com.badlogic.gdx.Input.Keys;
 
 public class GameScreen extends ScreenAdapter {
-    /* Class who manage the display of the game */
+    /**
+     * Class who manage the display of the game
+     */
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private World world;
@@ -33,27 +36,46 @@ public class GameScreen extends ScreenAdapter {
 
         tileMapHelper = new TileMapHelper(this);
         orthogonalTiledMapRenderer = tileMapHelper.setupMap();
-        
-        player = new Player(world);
+
+        // The player doesn't spawn on the ground but a little bit higher to not clip in
+        // it and fall
+        player = new Player(world, new Vector2(1 / constants.pixelPerMeter, 0.5f / constants.pixelPerMeter));
     }
 
     private void update() {
         world.step(1 / 60f, 6, 2);
         player.update(1 / 60f);
 
+        handleSpecialInput();
+
         cameraUpdate();
 
         batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.setView(camera);
-        
+
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
 
-
     }
 
-    /* Method usefull for later to allow the camera to follow the player */
+    /**
+     * This method will handle the input to change menu or respawn to last
+     * checkpoint because for example the respawn button destroy the instance of
+     * player to create an other one so we can't do it from the player class.
+     * 
+     *  "/" : respawn to spawn position (later on will be last checkpoint)
+     */
+    private void handleSpecialInput() {
+        if (Gdx.input.isKeyJustPressed(Keys.NUMPAD_DIVIDE)) {
+            world.destroyBody(this.player.b2body);
+            this.player = new Player(world, new Vector2(1 / constants.pixelPerMeter, 0.5f / constants.pixelPerMeter));
+        }
+    }
+
+    /**
+     * Method used to allow the camera to follow the player
+     */
     private void cameraUpdate() {
         camera.position.set(new Vector3(player.getX(), player.getY(), 0));
         camera.update();
@@ -68,13 +90,16 @@ public class GameScreen extends ScreenAdapter {
         orthogonalTiledMapRenderer.render();
 
         batch.begin();
-        
+
         player.draw(batch);
 
         batch.end();
         box2DDebugRenderer.render(world, camera.combined.scl(constants.pixelPerMeter));
     }
 
+    /**
+     * @return The world of the game.
+     */
     public World getWorld() {
         return world;
     }

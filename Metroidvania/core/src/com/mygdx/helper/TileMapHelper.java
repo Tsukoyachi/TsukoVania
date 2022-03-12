@@ -18,6 +18,7 @@ public class TileMapHelper {
      * Classe permettant de charger les différentes TiledMap ainsi que de gérer les
      * polygones du jeu.
      */
+
     private TiledMap tiledMap;
     private GameScreen gameScreen;
 
@@ -25,18 +26,22 @@ public class TileMapHelper {
         this.gameScreen = gameScreen;
     }
 
+    /*
+     * This method initialise the tiledMap with a tmx file and take the list of
+     * Polygon we want
+     */
     public OrthogonalTiledMapRenderer setupMap() {
-        /*
-         * This method initialise the tiledMap with a tmx file and take the list of
-         * Polygon we want
-         */
+
         tiledMap = new TmxMapLoader().load("maps\\map0.tmx");
         parseMapObjects(tiledMap.getLayers().get("objects").getObjects());
         return new OrthogonalTiledMapRenderer(tiledMap);
     }
 
+    /**
+     * This method parse all the mapObject to instance each one
+     */
     private void parseMapObjects(MapObjects mapObjects) {
-        /* This method parse all the mapObject to instance each one */
+
         for (MapObject mapObject : mapObjects) {
             if (mapObject instanceof PolygonMapObject) {
                 createStaticBody((PolygonMapObject) mapObject);
@@ -44,8 +49,13 @@ public class TileMapHelper {
         }
     }
 
+    /**
+     * Method who allow a polygonMapObject to be instancied and to draw them.
+     * 
+     * @param polygonMapObject The polygon who will use the static body we're creating.
+     */
     private void createStaticBody(PolygonMapObject polygonMapObject) {
-        /* Method who allow a polygonMapObject to be instancied and to draw them */
+
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
         Body body = gameScreen.getWorld().createBody(bodyDef);
@@ -54,18 +64,24 @@ public class TileMapHelper {
         shape.dispose();
     }
 
+    /**
+     * Method who allow a polygonMapObject to create a shape to be drawed later.
+     * 
+     * @param polygonMapObject The polygon who will use the shape we're drawing for his fixture.
+     * @return The shape of the fixture of our polygon.
+     */
     private Shape createPolygonShape(PolygonMapObject polygonMapObject) {
-        /* Method who allow a polygonMapObject to create a shape to be drawed later */
 
-        float[] vertices = polygonMapObject.getPolygon().getTransformedVertices(); // Contain x and y position of all
-                                                                                   // vertices of a shape
-        Vector2[] coordVertices = new Vector2[vertices.length / 2]; // Contain at the end Vector of the vertices to
-                                                                    // build a shape
+        // Contain x and y position of all vertices of a shape
+        float[] vertices = polygonMapObject.getPolygon().getTransformedVertices();
+
+        // Contain at the end Vector of the vertices to build a shape
+        Vector2[] coordVertices = new Vector2[vertices.length / 2];
         for (int i = 0; i < vertices.length / 2; i++) {
+            // Every odd indices are for x value and non odd one are for y values so we take
+            // them and put them on the coordVertices
             Vector2 currentVertice = new Vector2(vertices[2 * i] / constants.pixelPerMeter,
-                    vertices[2 * i + 1] / constants.pixelPerMeter); // Every odd indices are for x value and non odd one
-                                                                    // are for y values so we take them and put them on
-                                                                    // the coordVertices
+                    vertices[2 * i + 1] / constants.pixelPerMeter);
             coordVertices[i] = currentVertice;
         }
 
