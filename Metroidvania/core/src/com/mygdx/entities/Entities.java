@@ -16,16 +16,23 @@ public class Entities extends Sprite {
      */
 
     protected Rectangle bottom;
-    protected Texture texture;
+    protected Texture textureRight;
+    
+    protected Texture textureLeft;
     protected Sprite sprite;
+    protected Sprite spriteRight;
+    protected Sprite spriteLeft;
     public World world;
     public Body b2body;
+    protected boolean standRight = true;
 
-    public Entities(Texture texture, World world, Vector2 spawnPosition) {
+    public Entities(Texture textureRight, Texture textureLeft, World world, Vector2 spawnPosition) {
         bottom = new Rectangle(0.0f, 0.0f, 128.0f, 128.0f);
 
-        this.texture = texture;
-        sprite = new Sprite(texture, 0, 0, 128, 128);
+        this.textureRight = textureRight;
+        this.textureLeft = textureLeft;
+        spriteRight = new Sprite(textureRight, 0, 0, 128, 128);
+        spriteLeft = new Sprite(textureLeft, 0, 0, 128, 128);
         this.setPosition(spawnPosition.x, spawnPosition.y);
         this.world = world;
     }
@@ -50,6 +57,12 @@ public class Entities extends Sprite {
     public void setPosition(float x, float y) {
         bottom.x = x * constants.pixelPerMeter;
         bottom.y = y * constants.pixelPerMeter;
+        if(standRight){
+            sprite = spriteRight;
+        }
+        else {
+            sprite = spriteLeft;
+        }
         sprite.setPosition(x, y);
     }
 
@@ -107,6 +120,7 @@ public class Entities extends Sprite {
      */
     public void moveLeft(float delta) {
         this.b2body.applyLinearImpulse(new Vector2(-delta, 0), this.b2body.getWorldCenter(), true);
+        standRight = false;
     }
 
     /**
@@ -117,6 +131,6 @@ public class Entities extends Sprite {
      */
     public void moveRight(float delta) {
         this.b2body.applyLinearImpulse(new Vector2(delta, 0), this.b2body.getWorldCenter(), true);
-
+        standRight = true;
     }
 }

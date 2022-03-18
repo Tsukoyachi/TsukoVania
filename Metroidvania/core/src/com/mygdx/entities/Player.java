@@ -16,7 +16,7 @@ public class Player extends Entities {
      */
 
     public Player(World world, Vector2 spawnPosition) {
-        super(new Texture("player\\standing-right.png"), world, spawnPosition);
+        super(new Texture("player\\standing-right.png"),new Texture("player\\standing-left.png"), world, spawnPosition);
         definePlayer();
     }
 

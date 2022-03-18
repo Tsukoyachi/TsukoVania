@@ -67,7 +67,7 @@ public class GameScreen extends ScreenAdapter {
      *  "/" : respawn to spawn position (later on will be last checkpoint)
      */
     private void handleSpecialInput() {
-        if (Gdx.input.isKeyJustPressed(Keys.NUMPAD_DIVIDE)) {
+        if (Gdx.input.isKeyJustPressed(Keys.ALT_LEFT)) {
             world.destroyBody(this.player.b2body);
             this.player = new Player(world, new Vector2(1 / constants.pixelPerMeter, 0.5f / constants.pixelPerMeter));
         }
