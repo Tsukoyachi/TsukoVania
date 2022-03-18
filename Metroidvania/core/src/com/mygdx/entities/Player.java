@@ -17,7 +17,7 @@ public class Player extends Entities {
      */
 
     public Player(World world, Vector2 spawnPosition) {
-        super(new Texture("player\\standing-right.png"),new Texture("player\\standing-left.png"), world, spawnPosition);
+        super(new Texture("player\\standing-right.png"),new Texture("player\\standing-left.png"), world, spawnPosition, new Vector2(3f,0.130f));
         definePlayer();
     }
 
@@ -60,6 +60,9 @@ public class Player extends Entities {
 
         shape.set(shapeVertices);
         fdef.shape = shape;
+
+        fdef.friction = 0.3f;
+   
         b2body.createFixture(fdef);
 
         shape.dispose();
@@ -84,10 +87,10 @@ public class Player extends Entities {
                     new Vector2(this.getX(), this.getY()), true);
         }
         if (Gdx.input.isKeyPressed(Keys.Q) || Gdx.input.isKeyPressed(Keys.LEFT)) {
-            this.moveLeft(0.1f);
+            this.moveLeft(0.3f);
         }
         if (Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT)) {
-            this.moveRight(0.1f);
+            this.moveRight(0.3f);
         }
         this.setPosition(b2body.getPosition().x, b2body.getPosition().y);
 

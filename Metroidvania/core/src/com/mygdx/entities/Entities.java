@@ -17,7 +17,7 @@ public class Entities extends Sprite {
 
     protected Rectangle bottom;
     protected Texture textureRight;
-    
+
     protected Texture textureLeft;
     protected Sprite sprite;
     protected Sprite spriteRight;
@@ -26,7 +26,10 @@ public class Entities extends Sprite {
     public Body b2body;
     protected boolean standRight = true;
 
-    public Entities(Texture textureRight, Texture textureLeft, World world, Vector2 spawnPosition) {
+    protected Vector2 maxVelocity;
+
+    public Entities(Texture textureRight, Texture textureLeft, World world, Vector2 spawnPosition,
+            Vector2 maxVelocity) {
         bottom = new Rectangle(0.0f, 0.0f, 128.0f, 128.0f);
 
         this.textureRight = textureRight;
@@ -35,6 +38,8 @@ public class Entities extends Sprite {
         spriteLeft = new Sprite(textureLeft, 0, 0, 128, 128);
         this.setPosition(spawnPosition.x, spawnPosition.y);
         this.world = world;
+
+        this.maxVelocity = maxVelocity;
     }
 
     /**
@@ -57,10 +62,9 @@ public class Entities extends Sprite {
     public void setPosition(float x, float y) {
         bottom.x = x * constants.pixelPerMeter;
         bottom.y = y * constants.pixelPerMeter;
-        if(standRight){
+        if (standRight) {
             sprite = spriteRight;
-        }
-        else {
+        } else {
             sprite = spriteLeft;
         }
         sprite.setPosition(x, y);
@@ -116,10 +120,16 @@ public class Entities extends Sprite {
      * A method to apply a force on the physical body of an object to go to the
      * left, later it will load a special sprite of character going left
      * 
+     * TODO : bug, ugly speed variation when we go left in the air.
+     * 
      * @param delta This represent the "intensity" of the movement
      */
     public void moveLeft(float delta) {
-        this.b2body.applyLinearImpulse(new Vector2(-delta, 0), this.b2body.getWorldCenter(), true);
+        if (Math.abs(this.b2body.getLinearVelocity().x) + delta >= this.maxVelocity.x) {
+            this.b2body.setLinearVelocity(new Vector2(-this.maxVelocity.x, this.b2body.getLinearVelocity().y));
+        } else {
+            this.b2body.applyLinearImpulse(new Vector2(-delta, 0), this.b2body.getWorldCenter(), true);
+        }
         standRight = false;
     }
 
@@ -130,7 +140,11 @@ public class Entities extends Sprite {
      * @param delta This represent the "intensity" of the movement
      */
     public void moveRight(float delta) {
-        this.b2body.applyLinearImpulse(new Vector2(delta, 0), this.b2body.getWorldCenter(), true);
+        if (this.b2body.getLinearVelocity().x + delta >= this.maxVelocity.x) {
+            this.b2body.setLinearVelocity(new Vector2(this.maxVelocity.x, this.b2body.getLinearVelocity().y));
+        } else {
+            this.b2body.applyLinearImpulse(new Vector2(delta, 0), this.b2body.getWorldCenter(), true);
+        }
         standRight = true;
     }
 }
