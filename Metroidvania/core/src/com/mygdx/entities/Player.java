@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.helper.constants;
@@ -16,7 +17,7 @@ public class Player extends Entities {
      */
 
     public Player(World world, Vector2 spawnPosition) {
-        super(new Texture("player\\standing-right.png"),new Texture("player\\standing-left.png"), world, spawnPosition, new Vector2(3f,0.130f));
+        super(new Texture("player\\standing-right.png"),new Texture("player\\standing-left.png"), world, spawnPosition, new Vector2(5f,0.130f));
         definePlayer();
     }
 
@@ -28,6 +29,7 @@ public class Player extends Entities {
         BodyDef bdef = new BodyDef();
         bdef.position.set(this.getX(), this.getY());
         bdef.type = BodyDef.BodyType.DynamicBody;
+        bdef.gravityScale = 2 ;
 
         b2body = world.createBody(bdef);
 
@@ -61,7 +63,6 @@ public class Player extends Entities {
         fdef.shape = shape;
 
         fdef.friction = 0.3f;
-   
         b2body.createFixture(fdef);
 
         shape.dispose();
@@ -82,7 +83,7 @@ public class Player extends Entities {
      */
     public void update(float deltaTime) {
         if ((Gdx.input.isKeyJustPressed(Keys.Z) || Gdx.input.isKeyJustPressed(Keys.SPACE)) && canJump()) {
-            this.b2body.applyLinearImpulse(new Vector2(0, 0.130f * constants.pixelPerMeter),
+            this.b2body.applyLinearImpulse(new Vector2(0, 0.180f * constants.pixelPerMeter),
                     new Vector2(this.getX(), this.getY()), true);
         }
         if (Gdx.input.isKeyPressed(Keys.Q) || Gdx.input.isKeyPressed(Keys.LEFT)) {
