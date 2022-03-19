@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.helper.constants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import java.lang.Math;
 
 public class Player extends Entities {
     /**
@@ -102,7 +101,7 @@ public class Player extends Entities {
      * @return A boolean to check if the player can jump or not
      */
     public boolean canJump() {
-        if (this.b2body.getLinearVelocity().y <= 1)
+        if (this.b2body.getLinearVelocity().y == 0)
             return true;
         return false;
     }
