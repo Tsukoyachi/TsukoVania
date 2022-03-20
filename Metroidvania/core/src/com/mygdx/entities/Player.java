@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.helper.constants;
@@ -29,6 +28,8 @@ public class Player extends Entities {
         BodyDef bdef = new BodyDef();
         bdef.position.set(this.getX(), this.getY());
         bdef.type = BodyDef.BodyType.DynamicBody;
+
+        //Modification of the scale applied to the player to prevent "moon jump"
         bdef.gravityScale = 2 ;
 
         b2body = world.createBody(bdef);
@@ -62,7 +63,7 @@ public class Player extends Entities {
         shape.set(shapeVertices);
         fdef.shape = shape;
 
-        fdef.friction = 0.3f;
+        fdef.friction = 0.5f;
         b2body.createFixture(fdef);
 
         shape.dispose();
@@ -74,10 +75,12 @@ public class Player extends Entities {
      * 
      * TODO : (optional) Handle controller input.
      * TODO : Change jump to make it variable if user release jump button.
+     * TODO : Change dash by a method to make a dash because it's currently buged
      * 
      * "Z" or "Spacebar" : jump
      * "Q" or "left arrow" : go to left
      * "D" or "right arrow" : go to right
+     * "Left-control" : make an horizontal dash (at the moment we need to have an initial horizontal speed to make a dash)
      * 
      * @param deltaTime The amount of time between two call of update method
      */
@@ -92,12 +95,17 @@ public class Player extends Entities {
         if (Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT)) {
             this.moveRight(0.3f);
         }
+        if (Gdx.input.isKeyJustPressed(Keys.CONTROL_LEFT)){
+            this.b2body.setLinearVelocity(new Vector2(this.b2body.getLinearVelocity().x*10000,0));
+        }
         this.setPosition(b2body.getPosition().x, b2body.getPosition().y);
 
     }
 
     /**
      * This method check if the player is jumping or falling to see if he can jump
+     * 
+     * //TODO : create a real condition for the jump 
      * 
      * @return A boolean to check if the player can jump or not
      */
