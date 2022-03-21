@@ -39,7 +39,7 @@ public class GameScreen extends ScreenAdapter {
 
         // The player doesn't spawn on the ground but a little bit higher to not clip in
         // it and fall
-        player = new Player(world, new Vector2(1 / constants.pixelPerMeter, 0.5f / constants.pixelPerMeter));
+        player = new Player(world, new Vector2(1 / constants.pixelPerMeter, 1 / constants.pixelPerMeter));
     }
 
     private void update() {
@@ -69,7 +69,7 @@ public class GameScreen extends ScreenAdapter {
     private void handleSpecialInput() {
         if (Gdx.input.isKeyJustPressed(Keys.ALT_LEFT)) {
             world.destroyBody(this.player.b2body);
-            this.player = new Player(world, new Vector2(1 / constants.pixelPerMeter, 0.5f / constants.pixelPerMeter));
+            this.player = new Player(world, new Vector2(1 / constants.pixelPerMeter, 1 / constants.pixelPerMeter));
         }
     }
 
