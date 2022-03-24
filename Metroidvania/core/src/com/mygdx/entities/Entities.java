@@ -120,8 +120,6 @@ public class Entities extends Sprite {
      * A method to apply a force on the physical body of an object to go to the
      * left, later it will load a special sprite of character going left
      * 
-     * TODO : bug, ugly speed variation when we go left in the air.
-     * 
      * @param delta This represent the "intensity" of the movement
      */
     public void moveLeft(float delta) {
