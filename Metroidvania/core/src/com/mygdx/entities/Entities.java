@@ -125,7 +125,7 @@ public class Entities extends Sprite {
      * @param delta This represent the "intensity" of the movement
      */
     public void moveLeft(float delta) {
-        if (Math.abs(this.b2body.getLinearVelocity().x) + delta >= this.maxVelocity.x) {
+        if (this.b2body.getLinearVelocity().x - delta <= -this.maxVelocity.x) {
             this.b2body.setLinearVelocity(new Vector2(-this.maxVelocity.x, this.b2body.getLinearVelocity().y));
         } else {
             this.b2body.applyLinearImpulse(new Vector2(-delta, 0), this.b2body.getWorldCenter(), true);
@@ -147,4 +147,5 @@ public class Entities extends Sprite {
         }
         standRight = true;
     }
+
 }

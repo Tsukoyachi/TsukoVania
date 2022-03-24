@@ -15,8 +15,10 @@ public class Player extends Entities {
      * Class who extends Entities and allow the player to do special things
      */
 
+
     public Player(World world, Vector2 spawnPosition) {
-        super(new Texture("player\\standing-right.png"),new Texture("player\\standing-left.png"), world, spawnPosition, new Vector2(5f,0.130f));
+        super(new Texture("player\\standing-right.png"), new Texture("player\\standing-left.png"), world, spawnPosition,
+                new Vector2(5f, 0.130f));
         definePlayer();
     }
 
@@ -29,8 +31,8 @@ public class Player extends Entities {
         bdef.position.set(this.getX(), this.getY());
         bdef.type = BodyDef.BodyType.DynamicBody;
 
-        //Modification of the scale applied to the player to prevent "moon jump"
-        bdef.gravityScale = 2 ;
+        // Modification of the scale applied to the player to prevent "moon jump"
+        bdef.gravityScale = 2;
 
         b2body = world.createBody(bdef);
 
@@ -44,21 +46,28 @@ public class Player extends Entities {
          * sprite.
          * the sprite is 41 pixel per 49 pixel but the sprite doesn't take 41*49, he
          * take 40*48 and start at pixel 1*1 for the bottom left
+         * 
+         * The body of the sprite is not quite a rectangle because we rounded it for the
+         * bottom right and the bottom left to avoid some weird glitches.
          */
         float startx = 1 / constants.pixelPerMeter;
         float starty = 1 / constants.pixelPerMeter;
         float spriteWidth = 41 / constants.pixelPerMeter;
         float spriteHeight = 49 / constants.pixelPerMeter;
 
-        Vector2[] shapeVertices = new Vector2[4];
-        Vector2 bottomLeft = new Vector2(startx, starty);
-        shapeVertices[0] = bottomLeft;
-        Vector2 bottomRight = new Vector2(spriteWidth, starty);
-        shapeVertices[1] = bottomRight;
+        Vector2[] shapeVertices = new Vector2[6];
+        Vector2 trueBottomLeft = new Vector2(startx, starty + spriteHeight / 100);
+        shapeVertices[0] = trueBottomLeft;
+        Vector2 bottomLeft = new Vector2(startx + spriteWidth / 10, starty);
+        shapeVertices[1] = bottomLeft;
+        Vector2 bottomRight = new Vector2(spriteWidth * 9 / 10, starty);
+        shapeVertices[2] = bottomRight;
+        Vector2 trueBottomRight = new Vector2(spriteWidth, starty + spriteHeight / 100);
+        shapeVertices[3] = trueBottomRight;
         Vector2 topLeft = new Vector2(startx, spriteHeight);
-        shapeVertices[2] = topLeft;
+        shapeVertices[4] = topLeft;
         Vector2 topRight = new Vector2(spriteWidth, spriteHeight);
-        shapeVertices[3] = topRight;
+        shapeVertices[5] = topRight;
 
         shape.set(shapeVertices);
         fdef.shape = shape;
@@ -80,7 +89,8 @@ public class Player extends Entities {
      * "Z" or "Spacebar" : jump
      * "Q" or "left arrow" : go to left
      * "D" or "right arrow" : go to right
-     * "Left-control" : make an horizontal dash (at the moment we need to have an initial horizontal speed to make a dash)
+     * "Left-control" : make an horizontal dash (at the moment we need to have an
+     * initial horizontal speed to make a dash)
      * 
      * @param deltaTime The amount of time between two call of update method
      */
@@ -95,8 +105,8 @@ public class Player extends Entities {
         if (Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT)) {
             this.moveRight(0.3f);
         }
-        if (Gdx.input.isKeyJustPressed(Keys.CONTROL_LEFT)){
-            this.b2body.setLinearVelocity(new Vector2(this.b2body.getLinearVelocity().x*10000,0));
+        if (Gdx.input.isKeyJustPressed(Keys.CONTROL_LEFT)) {
+            this.b2body.setLinearVelocity(new Vector2(this.b2body.getLinearVelocity().x * 10000, 0));
         }
         this.setPosition(b2body.getPosition().x, b2body.getPosition().y);
 
@@ -105,7 +115,7 @@ public class Player extends Entities {
     /**
      * This method check if the player is jumping or falling to see if he can jump
      * 
-     * //TODO : create a real condition for the jump 
+     * //TODO : create a real condition for the jump
      * 
      * @return A boolean to check if the player can jump or not
      */
