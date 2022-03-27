@@ -1,7 +1,10 @@
 """A bit of code to add polygon colliders to a tiled map.
-Use the tile id 37 to make tiles that are not colliders, or use a different decorators list."""
+Use the tile id 37 to make tiles that are not colliders, or use a different decorators list, or directly a range."""
 
-def tiled_topolygon(file_input:str,file_output:str=None,decorators:list[int]=None):
+from typing import Union
+
+
+def tiled_topolygon(file_input:str,file_output:str=None,decorators:Union[list[int],range]=None):
     """
     Adds polygons to a tiled map.
     """
@@ -21,38 +24,45 @@ def tiled_topolygon(file_input:str,file_output:str=None,decorators:list[int]=Non
         while "</data>" not in list_lines[lines_after]:
             lines_after+=1
         l_lines=list_lines[lines_before+1:lines_after]
-        for value in l_lines:
-            value=value.replace("\n","").split(",")
-            value=[int(x) for x in value if x!=""]
+        for i in range(len(l_lines)):
+            l_lines[i]=l_lines[i].replace("\n","").split(",")
+            for x in range(len(l_lines[i])):
+                l_lines[i][x]=int(l_lines[i][x]) if l_lines[i][x]!="" else 0
+        # l_lines=[[0 for j in range(len(list_lines[0].split(",")))] for i in range(len(list_lines))]
+        # for index,value in enumerate(l_lines_2):
+        #     print(value)
+        #     l_lines[index]=value.replace("\n","").split(",")
+        #     l_lines[index]=[int(x) for x in l_lines[index] if x!=""]
     l_final.append("""<objectgroup id="2" name="objects">\n""")
-    id_polygon=20 #je commence à 20, valeur arbitraire
-    scale=32
+    id_polygon=20 # I start at 20, but tiled started at 17 idk why.
+    #  it's a security just in case, maybe the id changes if you add other layers
+    scale=64
+    slope_right=(1,0.2)
+
     for index,value in enumerate(l_lines):
         for index_2,value_2 in enumerate(value):
             if value_2 not in decorators:
-                l_final.append(f"""    <object id="{id_polygon}" x="{scale*index_2}" y="{
-                    scale*index}">\n""")
-                if l_lines[index][index_2+1] not in decorators:
-                    l_final.append(f"""      <polygon points="{scale*index_2},{scale*index} {
-                        scale*(index_2+4)},{scale*index} {scale*(index_2+4)},{scale*(index+2)} {
-                            scale*index_2},{scale*(index+2)}" />\n""")
-                elif l_lines[index+1][index_2] not in decorators:
-                    l_final.append(f"""      <polygon points="{scale*index_2},{scale*index} {
-                        scale*(index_2+2)},{scale*index} {scale*(index_2+2)},{scale*(index+4)} {
-                            scale*index_2},{scale*(index+4)}" />\n""")
-                else:
-                    l_final.append(f"""      <polygon points="{scale*index_2},{scale*index} {
-                        scale*(index_2+2)},{scale*index} {scale*(index_2+2)},{scale*(index+2)} {
-                            scale*index_2},{scale*(index+2)}" />\n""")
+                l_final.append(f"""    <object id="{id_polygon}" x="{scale*index_2+1}" y="{scale*index}">\n""")
+                l_final.append(f"""      <polygon points="{0 if is_decorator(l_lines,index_2,index-1,decorators) else -0.8},0 {scale-(2 if is_decorator(l_lines,index_2,index-1,decorators) else 1.2)},0 {scale-1},{(0 if is_decorator(l_lines,index_2,index-1,decorators) else 1) if is_decorator(l_lines,index_2+1,index,decorators) else 0.2} {scale-1},{scale-1} {scale-1.2},{scale} -0.8,{scale} {-1},{scale-1} {-1},{(0 if is_decorator(l_lines,index_2,index-1,decorators) else 1) if is_decorator(l_lines,index_2-1,index,decorators) else 0.2}" />\n""")
+                # l_final.append(f"""      <polygon points="0,0 {scale-4},0 {scale-2},2 {scale-2},{scale-2} {scale-4},{scale} 0,{scale} -2,{scale-2} -2,2" />\n""")
                 l_final.append("    </object>\n")
                 id_polygon+=1
+                # print("bon:",end="")
+            # print(value_2)
     l_final.append("""  </objectgroup>\n""")
     l_final.append("""</map>\n""")
-    print(l_final)
+    # print(l_final)
     if file_output is None:
         file_output="output.tmx"
     with open(file_output, 'w') as file:
         file.writelines(l_final)
 
+def is_decorator(list_values:list,x:int,y:int,decorators:Union[list[int],range]):
+    """
+    Returns True if the tile is a decorator.
+    """
+    if y in range(len(list_values)) and x in range(len(list_values[y])):
+        return list_values[y][x] in decorators
+
 if __name__ == "__main__":
-    tiled_topolygon("map0ancien.tmx","newmap.tmx",[0,37])
+    tiled_topolygon("map0.tmx","map0.tmx",[0,37])
